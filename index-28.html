@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KashView</title>
+<style>
+:root{--b:#1d4ed8;--bd:#1e3a8a;--bl:#e3ebfb;--o:#f59e0b;--o2:#ea580c;--bg:#eef3fc;--cd:#fff;--tx:#12203d;--mu:#5a6a8a;--br:#d6e0f3;--rd:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;background:#d9e2f4;color:var(--tx);font:16px/1.45 "Trebuchet MS","Segoe UI",system-ui,sans-serif}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--o);outline-offset:2px}
+.app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;padding-bottom:110px}
+.top{background:linear-gradient(160deg,#2563eb,var(--bd));color:#fff;padding:calc(18px + env(safe-area-inset-top,0px)) 18px 70px;border-radius:0 0 34px 34px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.brand{display:flex;align-items:center;gap:8px;font:800 1.3rem Georgia,serif}
+.right{display:flex;align-items:center;gap:8px}
+.chip{border:2px solid rgba(255,255,255,.4);background:rgba(255,255,255,.16);color:#fff;border-radius:22px;padding:8px 12px;font-weight:700;cursor:pointer;white-space:nowrap;font-size:.9rem}
+.lsel{background:rgba(255,255,255,.16);color:#fff;border:2px solid rgba(255,255,255,.4);border-radius:22px;padding:8px 8px;font-weight:700}
+.lsel option{color:#12203d}
+.top h1{font-size:1.7rem;margin:18px 0 2px}.top p{margin:0;opacity:.92}
+.tot{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.tot div{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);border-radius:18px;padding:12px}
+.tot small{display:block;letter-spacing:.08em;font-weight:700;font-size:.72rem}.tot b{font-size:1.4rem}
+.sec{display:none;padding:0 16px}.sec.on{display:block}
+.bal{background:#fff;border-radius:28px;padding:20px;margin-top:-52px;box-shadow:0 10px 26px rgba(30,58,138,.25)}
+.bal small{letter-spacing:.14em;font-weight:700;color:var(--b)}
+.bal .n{font-size:2.8rem;font-weight:800;line-height:1.1;margin:6px 0 10px;color:var(--bd)}.bal .n span+span{font-size:1.2rem}
+.pill{display:inline-block;border:1px solid var(--o);background:#fff4dd;color:#9a5a00;border-radius:20px;padding:6px 14px;font-weight:700;font-size:.9rem}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.mini div{background:var(--bl);border-radius:18px;padding:12px;text-align:center}
+.mini small{display:block;letter-spacing:.08em;font-weight:700;font-size:.72rem;color:var(--mu)}.mini b{font-size:1.6rem;color:var(--b)}
+.cta{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin-top:14px;border:0;border-radius:22px;padding:18px;text-align:left;background:linear-gradient(135deg,var(--o),var(--o2));color:#fff;cursor:pointer}
+.cta b{font-size:1.25rem;display:block}.cta span{opacity:.95;font-size:.92rem}.cta i{font-style:normal;font-size:1.6rem;background:rgba(255,255,255,.28);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;flex:none}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.two button{border:0;border-radius:20px;padding:16px 8px;font-weight:800;font-size:1rem;cursor:pointer;color:#fff}
+.w{background:var(--b)}.p{background:var(--bd)}
+.card{background:var(--cd);border:1px solid var(--br);border-radius:22px;padding:16px;margin-top:14px}
+.card h2{margin:0 0 6px;font-size:1.1rem}
+.ban{background:#fff4dd;border:1px solid var(--o);border-radius:16px;padding:12px;margin-top:14px;font-size:.92rem}
+.ban button{margin-top:8px}
+.btn{background:var(--b);color:#fff;border:0;border-radius:14px;padding:12px 16px;font-weight:800;cursor:pointer;display:inline-block;text-decoration:none;text-align:center}
+.btn.or{background:var(--o2)}.btn.wa{background:#1fa855}.btn.o{background:#fff;color:var(--b);border:2px solid var(--b)}.btn.full{width:100%;display:block}
+.btn:disabled{opacity:.5;cursor:default}
+.chips{display:flex;gap:8px;overflow-x:auto;background:#fff;border-radius:20px;padding:8px;margin-top:14px}
+.chips button{border:0;background:none;border-radius:14px;padding:10px 14px;font-weight:700;color:var(--mu);white-space:nowrap;cursor:pointer}
+.chips button.on{background:var(--b);color:#fff}
+.it{display:flex;align-items:center;gap:12px;background:#fff;border-radius:20px;border-left:6px solid var(--o);padding:12px;margin-top:12px}
+.it .ic{width:46px;height:46px;border-radius:12px;background:var(--bl);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex:none}
+.it div.t{flex:1;min-width:0}.it small{color:var(--mu)}
+.it .m{text-align:right;font-weight:800}.m.pos{color:var(--b)}.m.neg{color:var(--rd)}
+.bd{display:inline-block;font-size:.72rem;font-weight:800;border-radius:12px;padding:3px 10px;margin-top:4px;background:#dbe7ff;color:var(--bd)}
+.bd.y{background:#ffe9c2;color:#8a4f00}.bd.r{background:#fee2e2;color:#991b1b}
+.code{display:flex;align-items:center;justify-content:space-between;gap:10px;border:2px dashed #f6c36b;border-radius:18px;padding:14px;background:#fffaf0;margin:10px 0}
+.code b{font-size:1.5rem;letter-spacing:.12em;color:var(--o2)}
+.hd{display:flex;align-items:center;justify-content:space-between;margin:18px 0 0}.hd h3{margin:0;font-size:1.2rem}
+.row{display:flex;gap:10px}.row>*{flex:1}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--bd);border-radius:28px 28px 0 0;display:grid;grid-template-columns:repeat(6,1fr);gap:2px;padding:10px 6px calc(10px + env(safe-area-inset-bottom,0px));z-index:6}
+nav button{border:0;background:none;color:#c9d8fb;border-radius:16px;padding:8px 0;font-weight:700;font-size:.58rem;letter-spacing:-.01em;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;overflow:hidden}
+nav button span{font-size:1.3rem}nav button.on{background:#fff;color:var(--b)}
+.au{position:fixed;inset:0;background:linear-gradient(160deg,#2563eb,var(--bd));z-index:20;overflow:auto;display:none;padding:20px 16px}
+.au.on{display:block}.au .box{max-width:420px;margin:0 auto;background:#fff;border-radius:26px;padding:18px}
+.au label,.sh label{display:block;font-weight:700;font-size:.88rem;margin-top:10px}.au label small{font-weight:400;color:var(--mu)}
+.au input,.au select.f,.sh input,.sh select{width:100%;padding:12px;margin-top:4px;border:1px solid var(--br);border-radius:12px;background:#fff}
+.tabs{display:flex;gap:6px;margin-bottom:8px}.tabs button{flex:1;padding:10px;border:1px solid var(--br);border-radius:12px;background:var(--bg);font-weight:700;cursor:pointer}
+.tabs button.on{background:var(--b);color:#fff;border-color:var(--b)}
+#err{color:var(--rd);font-weight:700;min-height:1.3em;margin:10px 0 0;font-size:.9rem}
+.sh{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:15;display:none;align-items:flex-end;justify-content:center}
+.sh.on{display:flex}.sh .in{background:var(--bg);width:100%;max-width:480px;border-radius:28px 28px 0 0;padding:18px 16px calc(24px + env(safe-area-inset-bottom,0px));max-height:90vh;overflow:auto}
+.sh .in .btn{margin-top:10px}
+.tk{display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:12px;margin-top:10px}.tk div{flex:1}.tk small{color:var(--mu)}
+.q{background:#fff;border-radius:20px;padding:16px;margin-top:14px}.q h3{margin:0 0 10px}.q .op{display:block;width:100%;text-align:left;margin-top:8px;padding:12px;border:2px solid var(--br);border-radius:14px;background:#fff;font-weight:700;cursor:pointer}
+.q .op.ok{border-color:#16a34a;background:#dcfce7}.q .op.ko{border-color:var(--rd);background:#fee2e2}
+.hid{display:none!important}
+.lk{display:flex;align-items:center;gap:12px;background:#fff;border-radius:20px;padding:14px;margin-top:12px;text-decoration:none;color:inherit;border:0;width:100%;text-align:left;cursor:pointer;font:inherit}
+.lk .ic{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff;flex:none}
+.lk b{display:block}.lk small{color:var(--mu)}
+.note{font-size:.85rem;color:var(--mu);margin:10px 0 0}
+@media(min-width:900px){
+body{background:var(--bg)}
+.app{max-width:1180px;padding-bottom:30px;display:grid;grid-template-columns:250px 1fr;align-items:start;background:transparent}
+nav{position:sticky;top:0;left:auto;transform:none;grid-column:1;grid-row:1;width:auto;max-width:none;height:100vh;border-radius:0 28px 28px 0;grid-template-columns:1fr;align-content:start;gap:6px;padding:28px 12px}
+nav button{flex-direction:row;justify-content:flex-start;gap:12px;font-size:1rem;padding:13px 16px}
+.sec{grid-column:2;grid-row:1;padding:0 28px 30px;min-width:0}
+.top{border-radius:0 0 34px 34px;padding-top:28px}
+#s0 .bal,.chips,.sec .card,.q{max-width:760px}
+.sh .in{max-width:560px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<section class="sec on" id="s0">
+<div class="top"><div class="bar"><div class="brand"><svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><rect x="1" y="1" width="44" height="28" rx="4" fill="#fff"/><path d="M9 15c4-6 8-8 14-8s10 2 14 8c-4 6-8 8-14 8S13 21 9 15z" fill="#1d4ed8"/><circle cx="23" cy="15" r="5" fill="#fff"/><circle cx="23" cy="15" r="2" fill="#f59e0b"/></svg>KashView</div>
+<div class="right"><select class="lsel" aria-label="Langue"><option value="fr">FR</option><option value="ht">HT</option><option value="en">EN</option><option value="es">ES</option></select><button class="chip" data-act="logout" data-t="logout"></button></div></div>
+<h1 id="hi"></h1><p data-t="welcome"></p></div>
+<div class="bal"><small data-t="balLbl"></small><div class="n"><span id="a">0</span> <span>HTG</span></div><span class="pill" id="st"></span>
+<div class="mini"><div><small data-t="refs"></small><b id="nr">0</b></div><div><small data-t="gained"></small><b id="g">0</b></div></div>
+<button class="cta" id="mk"><div><b data-t="cta1"></b><span data-t="cta2"></span></div><i>→</i></button>
+<div class="two"><button class="w" data-act="withdraw" data-t="btnW"></button><button class="p" data-act="transfer" data-t="btnT"></button></div></div>
+<div id="bn"></div>
+<div class="card"><h2 data-t="how"></h2><ol style="margin:0;padding-left:20px;font-size:.92rem"><li data-t="h1"></li><li data-t="h2"></li><li data-t="h3"></li><li data-t="h4"></li></ol></div>
+</section>
+
+<section class="sec" id="sg">
+<div class="top"><h1 style="margin-top:6px" data-t="winT"></h1><p data-t="winS"></p></div>
+<div class="chips" id="gc" style="margin-top:-30px"><button class="on" data-p="pv" data-t="tabVid"></button><button data-p="pq" data-t="tabQz"></button><button data-p="pm" data-t="tabMis"></button></div>
+<div id="pv"><p class="note" data-t="vidInfo"></p><div id="vl"></div></div>
+<div id="pq" class="hid"><div id="qb"></div></div>
+<div id="pm" class="hid"><p class="note" data-t="tkInfo"></p><div id="tl"></div></div>
+</section>
+
+<section class="sec" id="s1">
+<div class="top"><h1 style="margin-top:6px" data-t="histT"></h1><p data-t="histS"></p>
+<div class="tot"><div><small data-t="totIn"></small><b id="ti">+0 HTG</b></div><div><small data-t="totOut"></small><b id="to">-0 HTG</b></div></div></div>
+<div class="chips" id="fc"><button class="on" data-f="" data-t="fAll"></button><button data-f="dep" data-t="fDep"></button><button data-f="wd" data-t="fWd"></button><button data-f="gain" data-t="fGain"></button><button data-f="tr" data-t="fTr"></button><button data-f="ref" data-t="fRef"></button></div>
+<div id="hl"></div></section>
+
+<section class="sec" id="s2">
+<div class="top"><h1 style="margin-top:6px" data-t="refT"></h1><p data-t="refS"></p>
+<div class="tot"><div><small data-t="totRef"></small><b id="nr2">0</b></div><div><small data-t="totAct"></small><b id="na">0</b></div></div></div>
+<div class="card"><h2 data-t="myCode"></h2><p style="margin:0;color:var(--mu);font-size:.92rem" data-t="shareP"></p>
+<div class="code"><b id="cd">—</b><button class="btn or" id="cp"></button></div>
+<div class="row"><button class="btn" id="sh" data-t="share"></button><button class="btn wa" id="shw">WhatsApp</button></div></div>
+<div class="hd"><h3 data-t="refList"></h3></div><div id="rl"></div></section>
+
+<section class="sec" id="s3">
+<div class="top"><h1 style="margin-top:6px" data-t="supT"></h1><p data-t="supS"></p></div>
+<div style="margin-top:-30px">
+<button class="lk" data-act="help"><span class="ic" style="background:#1fa855">💬</span><div><b data-t="wa"></b><small data-t="waS"></small></div></button>
+<a class="lk" id="sem"><span class="ic" style="background:var(--o2)">✉️</span><div><b data-t="mail"></b><small id="sml"></small></div></a>
+<div class="card"><b data-t="supHow"></b><p style="margin:6px 0 0" data-t="supTxt"></p></div></div></section>
+
+<section class="sec" id="s4">
+<div class="top"><h1 style="margin-top:6px" data-t="accT"></h1><p data-t="accS"></p></div>
+<div class="card" style="margin-top:-34px"><b id="kn" style="font-size:1.25rem">—</b><div style="color:var(--mu)" id="kt"></div><span class="bd" id="kb">—</span></div>
+<div class="hd"><h3 data-t="sec"></h3></div>
+<button class="lk" data-act="pin"><span class="ic" style="background:var(--b)">🔑</span><div><b data-t="chPin"></b><small data-t="chPinS"></small></div></button>
+<div class="hd"><h3 data-t="menu"></h3></div>
+<button class="lk" data-act="pay"><span class="ic" style="background:var(--o2)">💳</span><div><b data-t="payBtn"></b><small data-t="payBtnS"></small></div></button>
+<button class="lk" data-act="verify"><span class="ic" style="background:var(--b)">✔️</span><div><b data-t="verify"></b><small data-t="verifyS"></small></div></button>
+<button class="lk" data-act="logout"><span class="ic" style="background:#64748b">↪</span><div><b data-t="logout2"></b><small data-t="logout2S"></small></div></button></section>
+
+<nav aria-label="Menu">
+<button class="on" data-t0="0"><span>🏠</span><i data-t="nHome" style="font-style:normal"></i></button><button data-t0="1"><span>💰</span><i data-t="nWin" style="font-style:normal"></i></button><button data-t0="2"><span>🕘</span><i data-t="nHist" style="font-style:normal"></i></button><button data-t0="3"><span>👥</span><i data-t="nRef" style="font-style:normal"></i></button><button data-t0="4"><span>🎧</span><i data-t="nSup" style="font-style:normal"></i></button><button data-t0="5"><span>👤</span><i data-t="nAcc" style="font-style:normal"></i></button>
+</nav>
+</div>
+
+<div class="sh" id="ps"><div class="in"><div id="psb"></div><button class="btn o full" id="psx" data-t="tkClose"></button></div></div>
+
+<div class="au on" id="au"><div class="box">
+<div class="bar" style="margin-bottom:10px"><div class="brand" style="color:var(--b)"><svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><rect x="1" y="1" width="44" height="28" rx="4" fill="#1d4ed8"/><path d="M9 15c4-6 8-8 14-8s10 2 14 8c-4 6-8 8-14 8S13 21 9 15z" fill="#fff"/><circle cx="23" cy="15" r="5" fill="#1d4ed8"/><circle cx="23" cy="15" r="2" fill="#f59e0b"/></svg>KashView</div>
+<select class="lsel" style="background:#fff;color:#12203d;border-color:var(--br)" aria-label="Langue"><option value="fr">Français</option><option value="ht">Kreyòl</option><option value="en">English</option><option value="es">Español</option></select></div>
+<div class="tabs"><button id="t2" class="on" data-t="tabSignup"></button><button id="t1" data-t="tabLogin"></button></div>
+<form id="fs" novalidate>
+<label for="sn" data-t="lastName"></label><input id="sn" autocomplete="family-name"><label for="sp" data-t="firstName"></label><input id="sp" autocomplete="given-name">
+<label for="sph" data-t="phone"></label><input id="sph" type="tel" inputmode="tel" placeholder="+509 ..." autocomplete="tel"><label for="se" data-t="email"></label><input id="se" type="email" autocomplete="email">
+<label for="sk" data-t="pinNew"></label><input id="sk" type="password" inputmode="numeric" autocomplete="new-password">
+<label for="sr"><span data-t="refCode"></span> <small data-t="opt"></small></label><input id="sr" autocapitalize="characters">
+<button class="btn full" style="margin-top:16px" type="submit" data-t="btnCreate"></button></form>
+<form id="fl" class="hid" novalidate><label for="lt" data-t="phone"></label><input id="lt" type="tel" inputmode="tel" autocomplete="tel"><label for="lp" data-t="pin"></label><input id="lp" type="password" inputmode="numeric" autocomplete="current-password"><button class="btn full" style="margin-top:16px" type="submit" data-t="btnLogin"></button></form>
+<div id="fo" class="hid"><h3 data-t="okT"></h3><p data-t="okP"></p><button class="btn or full" id="fp" data-t="payBtn"></button><a class="btn wa full" id="fw" target="_blank" rel="noopener" data-t="waBtn"></a><button class="btn o full" id="fg" data-t="enter"></button></div>
+<p id="err" role="alert"></p></div></div>
+
+<script>
+var CFG={
+ wa:["5094","3750","836"].join(""),
+ pay:["5094","3750","836"].join(""),
+ email:"cashview@gmail.com",
+ ussd:"*202#",
+ stores:{moncash:"https://play.google.com/store/search?q=moncash&c=apps",natcash:"https://play.google.com/store/search?q=natcash&c=apps"},
+ script:""
+};
+var QR=15;
+var VIDEOS=[{k:"v1",d:"1",r:25,url:""},{k:"v2",d:"2",r:35,url:""},{k:"v3",d:"3",r:40,url:""}];
+var TK=[{i:"▶️",r:25},{i:"📘",r:35},{i:"🎬",r:40},{i:"🔗",r:50}];
+var T={
+fr:{logout:"↪ Quitter",welcome:"Bienvenue sur votre tableau de bord",balLbl:"▭ VOTRE SOLDE",refs:"PARRAINAGES",gained:"TOTAL GAGNÉ",cta1:"Gagner de l'argent 💰",cta2:"Vidéos, quiz et missions",btnW:"Retirer",btnT:"Transférer",how:"Comment ça marche",h1:"Créez votre compte.",h2:"Payez 250 HTG (dont 125 HTG de réserve) par MonCash ou NatCash.",h3:"Nous activons votre compte après vérification.",h4:"Pour retirer : 20 tâches validées et 250 HTG de gains.",
+winT:"Gagner de l'argent",winS:"Vidéos, quiz et missions",tabVid:"Vidéos",tabQz:"Quiz",tabMis:"Missions",vidInfo:"Regardez une vidéo, puis réclamez votre récompense. Elle est validée par notre équipe sur WhatsApp.",watch:"Regarder",claim:"Réclamer",soon:"Bientôt disponible",v1:"Vidéo partenaire 1",v2:"Vidéo partenaire 2",v3:"Vidéo partenaire 3",
+qzInfo:"Répondez juste aux {n} questions pour gagner {r} HTG (validation par l'équipe).",qzStart:"Commencer le quiz",qzQ:"Question {i}/{n}",qzScore:"Score : {s}/{n}",qzWin:"Bravo ! 🎉",qzClaim:"Réclamer {r} HTG",qzRetry:"Réessayer",
+qz:[{q:"Combien de tâches validées faut-il pour retirer ?",o:["10","20","50"],a:1},{q:"Quel est le frais sur un transfert entre utilisateurs ?",o:["1 %","5 %","10 %"],a:0},{q:"Que faut-il pour activer votre compte ?",o:["Un paiement de 250 HTG vérifié","Rien du tout","Seulement un message"],a:0}],
+histT:"Historique",histS:"Tous vos mouvements d'argent",totIn:"TOTAL ENTRÉES",totOut:"TOTAL SORTIES",fAll:"Tout",fDep:"Dépôt",fWd:"Retrait",fGain:"Gain",fTr:"Transfert",fRef:"Parrainage",noHist:"Aucun mouvement pour le moment.",
+refT:"Mes parrainages 👥",refS:"Personnes inscrites avec votre code",totRef:"TOTAL PARRAINAGES",totAct:"ACTIFS",myCode:"VOTRE CODE DE RÉFÉRENCE",shareP:"Partagez ce code avec vos amis. Quand ils s'inscrivent avec votre code, vous les voyez ici.",copy:"Copier",copied:"Copié ✓",share:"Partager",refList:"Ma liste",noRef:"Personne ne s'est encore inscrit avec votre code.",active:"ACTIF",inactive:"NON ACTIF",
+supT:"Aide & contact",supS:"Nous sommes là pour vous aider",wa:"Écrire sur WhatsApp",waS:"Réponse rapide",mail:"E-mail",supHow:"Comment obtenir de l'aide :",supTxt:"Cliquez sur le bouton WhatsApp pour une réponse rapide.",
+accT:"Mon compte",accS:"Informations et paramètres",sec:"🛡️ Sécurité",chPin:"Changer le code PIN",chPinS:"Modifier votre code secret",menu:"Menu",verify:"Vérifier mon compte",verifyS:"Envoyez votre pièce d'identité sur WhatsApp",logout2:"Quitter",logout2S:"Se déconnecter",payBtn:"Payer 250 HTG",payBtnS:"MonCash ou NatCash",
+nHome:"Accueil",nWin:"Gagner",nHist:"Historique",nRef:"Parrainage",nSup:"Aide",nAcc:"Compte",
+tkClose:"Fermer",tkInfo:"Choisissez une mission. Notre équipe la valide sur WhatsApp, puis l'argent est crédité sur votre solde.",tkGo:"Faire",rew:"Récompense",dur:"Durée",
+task1:"Regarder une vidéo publicitaire",task2:"Découvrir une page sponsorisée",task3:"Visionner une vidéo informative",task4:"Lire un article partenaire",d1:"30 secondes",d2:"1 minute",d3:"2 minutes",d4:"3 minutes",
+tabLogin:"Connexion",tabSignup:"Créer un compte",pin:"Code secret (PIN)",lastName:"Nom",firstName:"Prénom",phone:"Téléphone",email:"E-mail",pinNew:"Code secret PIN (4 à 8 chiffres)",refCode:"Code de référence",opt:"(facultatif)",btnLogin:"Se connecter",btnCreate:"Créer mon compte",okT:"Compte enregistré ✅",okP:"Dernière étape : payez 250 HTG par MonCash ou NatCash. Votre compte sera activé après vérification.",waBtn:"Envoyer sur WhatsApp",enter:"Accéder à mon compte",
+payT:"Payer 250 HTG",payS:"Ouvrez MonCash ou NatCash, envoyez 250 HTG au numéro copié, puis envoyez la preuve sur WhatsApp.",payTo:"Destinataire",copyNum:"Copier le numéro",oMon:"Ouvrir MonCash (*202#)",oNat:"Ouvrir NatCash (*202#)",aMon:"Application MonCash",aNat:"Application NatCash",ussd:"Le code *202# fonctionne avec la carte SIM de l'opérateur : Digicel pour MonCash, Natcom pour NatCash.",paid:"J'ai payé : envoyer la preuve",
+wdT:"Demande de retrait",wdM:"Moyen de retrait",wdW:"Numéro du portefeuille",wdA:"Montant (minimum 200 HTG)",wdSend:"Envoyer la demande sur WhatsApp",wdCheck:"Vérifier mon portefeuille :",
+hello:"Bonjour, {n} ! 👋",banPay:"Payez <b>250 HTG</b> par MonCash ou NatCash pour activer votre compte.",payNow:"Payer maintenant",banVer:"Faites vérifier votre compte pour envoyer des transferts.",askVer:"Demander la vérification",
+stPend:"⏳ Paiement en attente",stAct:"✅ Compte activé",stVer:"✅ Compte vérifié",stSus:"⛔ Compte suspendu",bdPend:"EN ATTENTE",bdAct:"ACTIVÉ",bdVer:"VÉRIFIÉ",bdSus:"SUSPENDU",
+demo:"🧪 Mode test : ce compte reste sur cet appareil. Ajoutez le lien Google Sheet (CFG.script) pour enregistrer les vrais comptes.",
+aAct:"Activez d'abord votre compte (paiement de 250 HTG).",aTrOnly:"Les transferts sont réservés aux comptes vérifiés.",pTo:"Téléphone du bénéficiaire (compte vérifié)",pAmt:"Montant à envoyer (HTG)",aInsuf:"Solde disponible insuffisant.",cTr:"Montant : {m} HTG\nFrais de 1 % : {f} HTG\nLe bénéficiaire reçoit : {r} HTG\n\nEnvoyer la demande sur WhatsApp ?",aWd:"Retrait impossible pour le moment.\nIl faut 20 tâches validées (vous : {t}) et 250 HTG de gains (vous : {g}).",aMin:"Le retrait minimum est de 200 HTG.",pOld:"Code PIN actuel",pNew:"Nouveau PIN (4 à 8 chiffres)",aPinOk:"PIN modifié.",aPinBad:"PIN actuel incorrect.",
+eLogin:"Téléphone ou code secret incorrect.",eMany:"Trop de tentatives. Réessayez dans 10 minutes.",eInv:"Téléphone ou code secret invalide.",eReq:"Remplissez le nom, le prénom, le téléphone et l'e-mail.",eMail:"Adresse e-mail invalide.",eTel:"Numéro de téléphone invalide.",ePin:"Le code PIN doit avoir 4 à 8 chiffres.",eDup:"Ce numéro a déjà un compte. Connectez-vous.",eReg:"Inscription impossible."},
+ht:{logout:"↪ Soti",welcome:"Byenveni nan dashboard ou",balLbl:"▭ BALANS OU",refs:"REFERANS",gained:"TOTAL GAGNE",cta1:"Fè Lajan Kounye a 💰",cta2:"Videyo, quiz ak misyon",btnW:"Retire",btnT:"Transfere",how:"Kijan sa mache",h1:"Kreye kont ou.",h2:"Peye 250 HTG (125 HTG se rezèv ou) pa MonCash oswa NatCash.",h3:"N ap aktive kont ou apre verifikasyon.",h4:"Pou retire : 20 tach valide ak 250 HTG gany.",
+winT:"Fè Lajan",winS:"Videyo, quiz ak misyon",tabVid:"Videyo",tabQz:"Quiz",tabMis:"Misyon",vidInfo:"Gade yon videyo, epi mande rekonpans ou. Ekip nou valide l sou WhatsApp.",watch:"Gade",claim:"Mande",soon:"Byento disponib",v1:"Videyo patnè 1",v2:"Videyo patnè 2",v3:"Videyo patnè 3",
+qzInfo:"Reponn byen {n} kesyon yo pou w touche {r} HTG (ekip la valide).",qzStart:"Kòmanse quiz la",qzQ:"Kesyon {i}/{n}",qzScore:"Nòt : {s}/{n}",qzWin:"Bravo ! 🎉",qzClaim:"Mande {r} HTG",qzRetry:"Eseye ankò",
+qz:[{q:"Konbyen tach valide fò gen pou retire ?",o:["10","20","50"],a:1},{q:"Konbyen frè sou yon transfè ant itilizatè ?",o:["1 %","5 %","10 %"],a:0},{q:"Kisa ki nesesè pou aktive kont ou ?",o:["Yon peman 250 HTG ki verifye","Anyen","Sèlman yon mesaj"],a:0}],
+histT:"Istwa Tranzaksyon",histS:"Tout mouvman lajan ou",totIn:"TOTAL ANTRE",totOut:"TOTAL SOTI",fAll:"Tout",fDep:"Depo",fWd:"Retrè",fGain:"Gany",fTr:"Transfè",fRef:"Referans",noHist:"Pa gen mouvman pou kounye a.",
+refT:"Moun Ou Refere 👥",refS:"Moun ki enskri ak kòd ou",totRef:"TOTAL REFERANS",totAct:"AKTIF",myCode:"KÒD REFERANS OU",shareP:"Pataje kòd sa a ak zanmi w. Lè yo enskri ak kòd ou, ou wè yo isit la.",copy:"Kopye",copied:"Kopye ✓",share:"Pataje",refList:"Lis mwen",noRef:"Pèsonn poko enskri ak kòd ou.",active:"AKTIF",inactive:"PA AKTIF",
+supT:"Sipò & Kontak",supS:"Nou la pou ede w ak nenpòt kesyon",wa:"Ekri sou WhatsApp",waS:"Repons rapid",mail:"Imèl",supHow:"Kijan pou w jwenn sipò :",supTxt:"Klike sou bouton WhatsApp lan pou repons rapid.",
+accT:"Kont Mwen",accS:"Enfòmasyon ak paramèt kont ou",sec:"🛡️ Sekirite",chPin:"Chanje PIN",chPinS:"Modifye kòd sekrè w",menu:"Meni",verify:"Verifye kont mwen",verifyS:"Voye pyès idantite w sou WhatsApp",logout2:"Soti",logout2S:"Dekonekte",payBtn:"Peye 250 HTG",payBtnS:"MonCash oswa NatCash",
+nHome:"Akèy",nWin:"Fè lajan",nHist:"Istorik",nRef:"Referans",nSup:"Sipò",nAcc:"Kont",
+tkClose:"Fèmen",tkInfo:"Chwazi yon misyon. Ekip nou valide l sou WhatsApp, epi lajan an antre nan balans ou.",tkGo:"Fè l",rew:"Rekonpans",dur:"Dire",
+task1:"Gade yon videyo piblisitè",task2:"Dekouvri yon paj sponsorize",task3:"Gade yon videyo enfòmatif",task4:"Li yon atik patnè",d1:"30 segonn",d2:"1 minit",d3:"2 minit",d4:"3 minit",
+tabLogin:"Konekte",tabSignup:"Kreye kont",pin:"Kòd sekrè (PIN)",lastName:"Non",firstName:"Prenon",phone:"Telefòn",email:"Imèl",pinNew:"Kòd sekrè PIN (4 a 8 chif)",refCode:"Kòd referans",opt:"(opsyonèl)",btnLogin:"Konekte",btnCreate:"Kreye kont mwen",okT:"Kont enskri ✅",okP:"Dènye etap : peye 250 HTG pa MonCash oswa NatCash. N ap aktive kont ou apre verifikasyon.",waBtn:"Voye sou WhatsApp",enter:"Antre nan kont mwen",
+payT:"Peye 250 HTG",payS:"Louvri MonCash oswa NatCash, voye 250 HTG sou nimewo ki kopye a, epi voye prèv la sou WhatsApp.",payTo:"Destinatè",copyNum:"Kopye nimewo a",oMon:"Louvri MonCash (*202#)",oNat:"Louvri NatCash (*202#)",aMon:"Aplikasyon MonCash",aNat:"Aplikasyon NatCash",ussd:"Kòd *202# mache ak kat SIM operatè a : Digicel pou MonCash, Natcom pou NatCash.",paid:"Mwen peye : voye prèv la",
+wdT:"Demann retrè",wdM:"Mwayen retrè",wdW:"Nimewo pòtfèy la",wdA:"Montan (minimòm 200 HTG)",wdSend:"Voye demann nan sou WhatsApp",wdCheck:"Tcheke pòtfèy mwen :",
+hello:"Bonjou, {n}! 👋",banPay:"Peye <b>250 HTG</b> pa MonCash oswa NatCash pou aktive kont ou.",payNow:"Peye kounye a",banVer:"Fè verifye kont ou pou voye transfè.",askVer:"Mande verifikasyon",
+stPend:"⏳ Peman an atant",stAct:"✅ Kont aktive",stVer:"✅ Kont verifye",stSus:"⛔ Kont sispann",bdPend:"AN ATANT",bdAct:"AKTIVE",bdVer:"VERIFYE",bdSus:"SISPANN",
+demo:"🧪 Mòd tès : kont sa a rete sou aparèy sa a sèlman. Mete lyen Google Sheet la (CFG.script) pou vrè kont yo.",
+aAct:"Aktive kont ou anvan (peman 250 HTG).",aTrOnly:"Transfè yo rezève pou kont ki verifye.",pTo:"Telefòn benefisyè a (kont verifye)",pAmt:"Montan pou voye (HTG)",aInsuf:"Balans disponib pa ase.",cTr:"Montan : {m} HTG\nFrè 1 % : {f} HTG\nBenefisyè a resevwa : {r} HTG\n\nVoye demann nan sou WhatsApp ?",aWd:"Retrè pa posib kounye a.\nFò gen 20 tach valide (ou gen {t}) ak 250 HTG gany (ou gen {g}).",aMin:"Retrè minimòm lan se 200 HTG.",pOld:"PIN kounye a",pNew:"Nouvo PIN (4 a 8 chif)",aPinOk:"PIN chanje.",aPinBad:"PIN kounye a pa kòrèk.",
+eLogin:"Telefòn oswa PIN pa kòrèk.",eMany:"Twòp tantativ. Eseye ankò nan 10 minit.",eInv:"Telefòn oswa PIN pa valid.",eReq:"Ranpli non, prenon, telefòn ak imèl.",eMail:"Adrès imèl pa valid.",eTel:"Nimewo telefòn pa valid.",ePin:"PIN lan dwe gen 4 a 8 chif.",eDup:"Nimewo sa a gen yon kont deja. Konekte.",eReg:"Enskripsyon pa posib."},
+en:{logout:"↪ Log out",welcome:"Welcome to your dashboard",balLbl:"▭ YOUR BALANCE",refs:"REFERRALS",gained:"TOTAL EARNED",cta1:"Earn money 💰",cta2:"Videos, quizzes and missions",btnW:"Withdraw",btnT:"Transfer",how:"How it works",h1:"Create your account.",h2:"Pay 250 HTG (125 HTG of it is your reserve) by MonCash or NatCash.",h3:"We activate your account after checking.",h4:"To withdraw: 20 validated tasks and 250 HTG of earnings.",
+winT:"Earn money",winS:"Videos, quizzes and missions",tabVid:"Videos",tabQz:"Quiz",tabMis:"Missions",vidInfo:"Watch a video, then claim your reward. Our team validates it on WhatsApp.",watch:"Watch",claim:"Claim",soon:"Coming soon",v1:"Partner video 1",v2:"Partner video 2",v3:"Partner video 3",
+qzInfo:"Answer all {n} questions correctly to earn {r} HTG (validated by the team).",qzStart:"Start the quiz",qzQ:"Question {i}/{n}",qzScore:"Score: {s}/{n}",qzWin:"Well done! 🎉",qzClaim:"Claim {r} HTG",qzRetry:"Try again",
+qz:[{q:"How many validated tasks are needed to withdraw?",o:["10","20","50"],a:1},{q:"What is the fee on a transfer between users?",o:["1%","5%","10%"],a:0},{q:"What do you need to activate your account?",o:["A verified 250 HTG payment","Nothing at all","Just a message"],a:0}],
+histT:"History",histS:"All your money movements",totIn:"TOTAL IN",totOut:"TOTAL OUT",fAll:"All",fDep:"Deposit",fWd:"Withdrawal",fGain:"Earning",fTr:"Transfer",fRef:"Referral",noHist:"No movements yet.",
+refT:"My referrals 👥",refS:"People who signed up with your code",totRef:"TOTAL REFERRALS",totAct:"ACTIVE",myCode:"YOUR REFERRAL CODE",shareP:"Share this code with your friends. When they sign up with your code, you see them here.",copy:"Copy",copied:"Copied ✓",share:"Share",refList:"My list",noRef:"Nobody has signed up with your code yet.",active:"ACTIVE",inactive:"NOT ACTIVE",
+supT:"Help & contact",supS:"We are here to help you",wa:"Write on WhatsApp",waS:"Quick answer",mail:"Email",supHow:"How to get help:",supTxt:"Tap the WhatsApp button for a quick answer.",
+accT:"My account",accS:"Information and settings",sec:"🛡️ Security",chPin:"Change PIN",chPinS:"Change your secret code",menu:"Menu",verify:"Verify my account",verifyS:"Send your ID on WhatsApp",logout2:"Log out",logout2S:"Sign out",payBtn:"Pay 250 HTG",payBtnS:"MonCash or NatCash",
+nHome:"Home",nWin:"Earn",nHist:"History",nRef:"Referrals",nSup:"Help",nAcc:"Account",
+tkClose:"Close",tkInfo:"Pick a mission. Our team validates it on WhatsApp, then the money is added to your balance.",tkGo:"Do it",rew:"Reward",dur:"Duration",
+task1:"Watch an advertising video",task2:"Discover a sponsored page",task3:"Watch an informative video",task4:"Read a partner article",d1:"30 seconds",d2:"1 minute",d3:"2 minutes",d4:"3 minutes",
+tabLogin:"Log in",tabSignup:"Create account",pin:"Secret code (PIN)",lastName:"Last name",firstName:"First name",phone:"Phone",email:"Email",pinNew:"Secret PIN (4 to 8 digits)",refCode:"Referral code",opt:"(optional)",btnLogin:"Log in",btnCreate:"Create my account",okT:"Account saved ✅",okP:"Last step: pay 250 HTG by MonCash or NatCash. Your account will be activated after checking.",waBtn:"Send on WhatsApp",enter:"Go to my account",
+payT:"Pay 250 HTG",payS:"Open MonCash or NatCash, send 250 HTG to the copied number, then send the proof on WhatsApp.",payTo:"Recipient",copyNum:"Copy the number",oMon:"Open MonCash (*202#)",oNat:"Open NatCash (*202#)",aMon:"MonCash app",aNat:"NatCash app",ussd:"The *202# code works with the SIM of the operator: Digicel for MonCash, Natcom for NatCash.",paid:"I paid: send the proof",
+wdT:"Withdrawal request",wdM:"Withdrawal method",wdW:"Wallet number",wdA:"Amount (minimum 200 HTG)",wdSend:"Send the request on WhatsApp",wdCheck:"Check my wallet:",
+hello:"Hello, {n}! 👋",banPay:"Pay <b>250 HTG</b> by MonCash or NatCash to activate your account.",payNow:"Pay now",banVer:"Get your account verified to send transfers.",askVer:"Request verification",
+stPend:"⏳ Payment pending",stAct:"✅ Account active",stVer:"✅ Account verified",stSus:"⛔ Account suspended",bdPend:"PENDING",bdAct:"ACTIVE",bdVer:"VERIFIED",bdSus:"SUSPENDED",
+demo:"🧪 Test mode: this account stays on this device. Add the Google Sheet link (CFG.script) to save real accounts.",
+aAct:"Activate your account first (250 HTG payment).",aTrOnly:"Transfers are only for verified accounts.",pTo:"Recipient phone (verified account)",pAmt:"Amount to send (HTG)",aInsuf:"Not enough available balance.",cTr:"Amount: {m} HTG\n1% fee: {f} HTG\nRecipient gets: {r} HTG\n\nSend the request on WhatsApp?",aWd:"Withdrawal not possible yet.\nYou need 20 validated tasks (you: {t}) and 250 HTG of earnings (you: {g}).",aMin:"The minimum withdrawal is 200 HTG.",pOld:"Current PIN",pNew:"New PIN (4 to 8 digits)",aPinOk:"PIN changed.",aPinBad:"Current PIN is incorrect.",
+eLogin:"Wrong phone or secret code.",eMany:"Too many attempts. Try again in 10 minutes.",eInv:"Invalid phone or secret code.",eReq:"Fill in last name, first name, phone and email.",eMail:"Invalid email address.",eTel:"Invalid phone number.",ePin:"The PIN must be 4 to 8 digits.",eDup:"This number already has an account. Log in.",eReg:"Sign-up not possible."},
+es:{logout:"↪ Salir",welcome:"Bienvenido a tu panel",balLbl:"▭ TU SALDO",refs:"REFERIDOS",gained:"TOTAL GANADO",cta1:"Gana dinero 💰",cta2:"Videos, quiz y misiones",btnW:"Retirar",btnT:"Transferir",how:"Cómo funciona",h1:"Crea tu cuenta.",h2:"Paga 250 HTG (125 HTG son tu reserva) por MonCash o NatCash.",h3:"Activamos tu cuenta tras verificar.",h4:"Para retirar: 20 tareas validadas y 250 HTG de ganancias.",
+winT:"Gana dinero",winS:"Videos, quiz y misiones",tabVid:"Videos",tabQz:"Quiz",tabMis:"Misiones",vidInfo:"Mira un video y reclama tu recompensa. Nuestro equipo la valida por WhatsApp.",watch:"Ver",claim:"Reclamar",soon:"Próximamente",v1:"Video asociado 1",v2:"Video asociado 2",v3:"Video asociado 3",
+qzInfo:"Responde bien las {n} preguntas para ganar {r} HTG (validado por el equipo).",qzStart:"Empezar el quiz",qzQ:"Pregunta {i}/{n}",qzScore:"Puntuación: {s}/{n}",qzWin:"¡Bravo! 🎉",qzClaim:"Reclamar {r} HTG",qzRetry:"Reintentar",
+qz:[{q:"¿Cuántas tareas validadas hacen falta para retirar?",o:["10","20","50"],a:1},{q:"¿Cuál es la comisión de una transferencia entre usuarios?",o:["1 %","5 %","10 %"],a:0},{q:"¿Qué hace falta para activar tu cuenta?",o:["Un pago de 250 HTG verificado","Nada","Solo un mensaje"],a:0}],
+histT:"Historial",histS:"Todos tus movimientos de dinero",totIn:"TOTAL ENTRADAS",totOut:"TOTAL SALIDAS",fAll:"Todo",fDep:"Depósito",fWd:"Retiro",fGain:"Ganancia",fTr:"Transferencia",fRef:"Referido",noHist:"Aún no hay movimientos.",
+refT:"Mis referidos 👥",refS:"Personas registradas con tu código",totRef:"TOTAL REFERIDOS",totAct:"ACTIVOS",myCode:"TU CÓDIGO DE REFERENCIA",shareP:"Comparte este código con tus amigos. Cuando se registren con tu código, los verás aquí.",copy:"Copiar",copied:"Copiado ✓",share:"Compartir",refList:"Mi lista",noRef:"Nadie se ha registrado con tu código todavía.",active:"ACTIVO",inactive:"NO ACTIVO",
+supT:"Ayuda y contacto",supS:"Estamos aquí para ayudarte",wa:"Escribir por WhatsApp",waS:"Respuesta rápida",mail:"Correo",supHow:"Cómo obtener ayuda:",supTxt:"Pulsa el botón de WhatsApp para una respuesta rápida.",
+accT:"Mi cuenta",accS:"Información y ajustes",sec:"🛡️ Seguridad",chPin:"Cambiar PIN",chPinS:"Modifica tu código secreto",menu:"Menú",verify:"Verificar mi cuenta",verifyS:"Envía tu documento de identidad por WhatsApp",logout2:"Salir",logout2S:"Cerrar sesión",payBtn:"Pagar 250 HTG",payBtnS:"MonCash o NatCash",
+nHome:"Inicio",nWin:"Ganar",nHist:"Historial",nRef:"Referidos",nSup:"Ayuda",nAcc:"Cuenta",
+tkClose:"Cerrar",tkInfo:"Elige una misión. Nuestro equipo la valida por WhatsApp y luego el dinero se añade a tu saldo.",tkGo:"Hacer",rew:"Recompensa",dur:"Duración",
+task1:"Ver un video publicitario",task2:"Descubrir una página patrocinada",task3:"Ver un video informativo",task4:"Leer un artículo asociado",d1:"30 segundos",d2:"1 minuto",d3:"2 minutos",d4:"3 minutos",
+tabLogin:"Entrar",tabSignup:"Crear cuenta",pin:"Código secreto (PIN)",lastName:"Apellido",firstName:"Nombre",phone:"Teléfono",email:"Correo",pinNew:"PIN secreto (4 a 8 dígitos)",refCode:"Código de referencia",opt:"(opcional)",btnLogin:"Entrar",btnCreate:"Crear mi cuenta",okT:"Cuenta registrada ✅",okP:"Último paso: paga 250 HTG por MonCash o NatCash. Tu cuenta se activará tras verificar.",waBtn:"Enviar por WhatsApp",enter:"Ir a mi cuenta",
+payT:"Pagar 250 HTG",payS:"Abre MonCash o NatCash, envía 250 HTG al número copiado y manda el comprobante por WhatsApp.",payTo:"Destinatario",copyNum:"Copiar el número",oMon:"Abrir MonCash (*202#)",oNat:"Abrir NatCash (*202#)",aMon:"App MonCash",aNat:"App NatCash",ussd:"El código *202# funciona con la SIM del operador: Digicel para MonCash, Natcom para NatCash.",paid:"Ya pagué: enviar comprobante",
+wdT:"Solicitud de retiro",wdM:"Método de retiro",wdW:"Número de la cartera",wdA:"Monto (mínimo 200 HTG)",wdSend:"Enviar la solicitud por WhatsApp",wdCheck:"Revisar mi cartera:",
+hello:"Hola, {n}! 👋",banPay:"Paga <b>250 HTG</b> por MonCash o NatCash para activar tu cuenta.",payNow:"Pagar ahora",banVer:"Verifica tu cuenta para enviar transferencias.",askVer:"Pedir verificación",
+stPend:"⏳ Pago pendiente",stAct:"✅ Cuenta activa",stVer:"✅ Cuenta verificada",stSus:"⛔ Cuenta suspendida",bdPend:"PENDIENTE",bdAct:"ACTIVA",bdVer:"VERIFICADA",bdSus:"SUSPENDIDA",
+demo:"🧪 Modo prueba: esta cuenta queda solo en este dispositivo. Añade el enlace de Google Sheet (CFG.script) para guardar cuentas reales.",
+aAct:"Activa primero tu cuenta (pago de 250 HTG).",aTrOnly:"Las transferencias son solo para cuentas verificadas.",pTo:"Teléfono del beneficiario (cuenta verificada)",pAmt:"Monto a enviar (HTG)",aInsuf:"Saldo disponible insuficiente.",cTr:"Monto: {m} HTG\nComisión 1 %: {f} HTG\nEl beneficiario recibe: {r} HTG\n\n¿Enviar la solicitud por WhatsApp?",aWd:"Retiro no posible por ahora.\nHacen falta 20 tareas validadas (tú: {t}) y 250 HTG de ganancias (tú: {g}).",aMin:"El retiro mínimo es de 200 HTG.",pOld:"PIN actual",pNew:"Nuevo PIN (4 a 8 dígitos)",aPinOk:"PIN cambiado.",aPinBad:"El PIN actual es incorrecto.",
+eLogin:"Teléfono o código secreto incorrecto.",eMany:"Demasiados intentos. Inténtalo en 10 minutos.",eInv:"Teléfono o código secreto no válido.",eReq:"Rellena apellido, nombre, teléfono y correo.",eMail:"Correo no válido.",eTel:"Número de teléfono no válido.",ePin:"El PIN debe tener de 4 a 8 dígitos.",eDup:"Este número ya tiene una cuenta. Entra.",eReg:"Registro no posible."}
+};
+var LOC={fr:"fr-FR",ht:"fr-FR",en:"en-US",es:"es-ES"};
+var L="fr",U=null,filt="",$=function(i){return document.getElementById(i)};
+function t(k,v){var s=(T[L]&&T[L][k])||T.fr[k]||k;if(v)for(var x in v)s=s.split("{"+x+"}").join(v[x]);return s}
+function n(x){return Number(x).toLocaleString(LOC[L])}
+function wa(x){window.open("https://wa.me/"+CFG.wa+"?text="+encodeURIComponent(x),"_blank")}
+function who(){return U?"\n\nNom : "+U.prenom+" "+U.nom+"\nTéléphone : "+U.tel:""}
+function fd(x){var d=new Date(x);return isNaN(d)?"":d.toLocaleDateString(LOC[L],{day:"2-digit",month:"short",year:"numeric"})}
+async function hsh(tel,pin){var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(tel.replace(/\D/g,"")+":"+pin));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")}
+function localApi(o){var D=JSON.parse(localStorage.getItem("kv-local")||"{}"),tel=o.tel.replace(/\D/g,""),save=function(){localStorage.setItem("kv-local",JSON.stringify(D))};
+ if(o.a==="register"){if(D[tel])return{ok:false,error:"dup"};D[tel]={nom:o.nom,prenom:o.prenom,h:o.h,code:"KV"+Math.random().toString(36).slice(2,8).toUpperCase()};save();return{ok:true}}
+ var u=D[tel];if(!u||u.h!==o.h)return{ok:false,error:"login"};
+ if(o.a==="pin"){u.h=o.h2;save();return{ok:true}}
+ return{ok:true,nom:u.nom,prenom:u.prenom,statut:"En attente de paiement",code:u.code,solde:0,reserve:0,gains:0,taches:0,refs:[],hist:[]}}
+function api(o){o.lang=L;if(!CFG.script)return Promise.resolve(localApi(o));
+ return fetch(CFG.script,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)}).then(function(r){return r.json()})}
+function kind(s){s=String(s||"").toLowerCase();
+ if(/^(dep|dép)/.test(s))return"dep";if(/^ret/.test(s))return"wd";if(/^(gai|gan)/.test(s))return"gain";if(/^tra/.test(s))return"tr";if(/^(par|ref)/.test(s))return"ref";return""}
+function stat(s){s=String(s||"").toLowerCase();if(/^(r[eé]ussi|reyisi|success|ok)/.test(s))return"ok";if(/^(rej|refus)/.test(s))return"rej";return"pend"}
+var ICO={dep:"💳",wd:"💵",gain:"🎁",tr:"🔁",ref:"👥"};
+var KL={dep:"fDep",wd:"fWd",gain:"fGain",tr:"fTr",ref:"fRef"};
+
+function show(i){document.querySelectorAll(".sec").forEach(function(s,j){s.classList.toggle("on",j===i)});
+ document.querySelectorAll("nav button").forEach(function(b,j){b.classList.toggle("on",j===i)});window.scrollTo(0,0)}
+document.querySelectorAll("nav button").forEach(function(b){b.onclick=function(){show(+b.dataset.t0)}});
+$("mk").onclick=function(){show(1)};
+$("gc").onclick=function(e){var b=e.target.closest("button");if(!b)return;this.querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b)});
+ ["pv","pq","pm"].forEach(function(p){$(p).classList.toggle("hid",p!==b.dataset.p)})};
+
+function labels(){document.querySelectorAll("[data-t]").forEach(function(e){e.textContent=t(e.dataset.t)});
+ $("cp").textContent=t("copy");document.documentElement.lang=L;
+ document.querySelectorAll(".lsel").forEach(function(s){s.value=L})}
+function render(){
+ $("au").classList.toggle("on",!U);if(!U)return;
+ $("hi").textContent=t("hello",{n:U.prenom});
+ $("a").textContent=n(U.solde);$("g").textContent=n(U.gains);$("nr").textContent=$("nr2").textContent=U.refs.length;
+ $("na").textContent=U.refs.filter(function(r){return r.statut!=="En attente de paiement"}).length;
+ var s=U.statut,pend=s==="En attente de paiement";
+ $("st").textContent=pend?t("stPend"):s==="Vérifié"?t("stVer"):s==="Suspendu"?t("stSus"):t("stAct");
+ $("kn").textContent=U.prenom+" "+U.nom;$("kt").textContent="📞 +"+U.tel.replace(/\D/g,"");
+ $("kb").textContent=t(pend?"bdPend":s==="Vérifié"?"bdVer":s==="Suspendu"?"bdSus":"bdAct");$("kb").className="bd"+(pend?" y":"");
+ $("cd").textContent=U.code||"—";
+ $("sml").textContent=CFG.email;$("sem").href="mailto:"+CFG.email;
+ var b=$("bn");b.innerHTML="";
+ if(pend){b.innerHTML='<div class="ban">'+t("banPay")+'<br><button class="btn or" id="pv2">'+t("payNow")+'</button></div>';$("pv2").onclick=function(){openPay()}}
+ else if(s==="Activé"){b.innerHTML='<div class="ban">'+t("banVer")+'<br><button class="btn or" id="vf">'+t("askVer")+'</button></div>';$("vf").onclick=function(){act("verify")}}
+ if(!CFG.script)b.insertAdjacentHTML("beforeend",'<div class="ban">'+t("demo")+'</div>');
+ hist();refs();tasks();videos();quiz(true);
+}
+function hist(){var tin=0,tout=0,l=$("hl");l.innerHTML="";
+ U.hist.forEach(function(h){if(stat(h.s)==="ok"){if(h.m>0)tin+=h.m;else tout+=-h.m}});
+ $("ti").textContent="+"+n(tin)+" HTG";$("to").textContent="-"+n(tout)+" HTG";
+ var A=U.hist.filter(function(h){return!filt||kind(h.t)===filt});
+ if(!A.length){l.innerHTML='<div class="card" style="color:var(--mu)">'+t("noHist")+'</div>';return}
+ A.forEach(function(h){var k=kind(h.t),st=stat(h.s),d=document.createElement("div");d.className="it";
+  d.innerHTML='<span class="ic">'+(ICO[k]||"💱")+'</span><div class="t"><b></b><small>📅 '+fd(h.d)+'</small></div><div class="m '+(h.m>=0?"pos":"neg")+'"><span></span><br><span class="bd'+(st==="ok"?"":st==="rej"?" r":" y")+'"></span></div>';
+  d.querySelector("b").textContent=KL[k]?t(KL[k]):h.t;d.querySelector(".m span").textContent=(h.m>0?"+":"")+n(h.m)+" HTG";d.querySelector(".bd").textContent=String(h.s).toUpperCase();l.appendChild(d)})}
+function refs(){var l=$("rl");l.innerHTML="";
+ if(!U.refs.length){l.innerHTML='<div class="card" style="color:var(--mu)">'+t("noRef")+'</div>';return}
+ U.refs.forEach(function(r){var d=document.createElement("div");d.className="it";var a=r.statut!=="En attente de paiement";
+  d.innerHTML='<span class="ic">👤</span><div class="t"><b></b><small>📅 '+fd(r.date)+'</small></div><span class="bd'+(a?"":" y")+'">'+t(a?"active":"inactive")+'</span>';
+  d.querySelector("b").textContent=r.nom;l.appendChild(d)})}
+$("fc").onclick=function(e){var b=e.target.closest("button");if(!b)return;filt=b.dataset.f;this.querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b)});if(U)hist()};
+
+function needActive(){if(U.statut==="En attente de paiement"){alert(t("aAct"));return true}return false}
+function tasks(){var l=$("tl");l.innerHTML="";TK.forEach(function(k,j){
+ var d=document.createElement("div");d.className="tk";d.innerHTML='<span style="font-size:1.6rem">'+k.i+'</span><div><b>'+t("task"+(j+1))+'</b><br><small>'+t("dur")+' : '+t("d"+(j+1))+' • '+t("rew")+' : '+k.r+' HTG</small></div>';
+ var b=document.createElement("button");b.className="btn";b.textContent=t("tkGo");
+ b.onclick=function(){if(needActive())return;wa("Bonjour KashView, je veux faire la mission : "+T.fr["task"+(j+1)]+" ("+k.r+" HTG)."+who())};
+ d.appendChild(b);l.appendChild(d)})}
+function videos(){var l=$("vl");l.innerHTML="";VIDEOS.forEach(function(v){
+ var d=document.createElement("div");d.className="tk";d.innerHTML='<span style="font-size:1.6rem">🎬</span><div><b>'+t(v.k)+'</b><br><small>'+t("dur")+' : '+v.d+' min • '+t("rew")+' : '+v.r+' HTG</small></div>';
+ var b=document.createElement("button");b.className="btn";
+ if(!v.url){b.textContent=t("soon");b.disabled=true}
+ else{b.textContent=t("watch");b.onclick=function(){if(needActive())return;if(!v.seen){window.open(v.url,"_blank");v.seen=true;b.textContent=t("claim")}
+  else wa("Bonjour KashView, j'ai regardé la vidéo : "+T.fr[v.k]+" ("+v.r+" HTG). Je demande la validation."+who())}}
+ d.appendChild(b);l.appendChild(d)})}
+var qi=0,qs=0;
+function quiz(reset){if(reset){qi=0;qs=0}var Q=(T[L].qz||T.fr.qz),b=$("qb");b.innerHTML="";
+ if(qi===0&&reset){b.innerHTML='<p class="note">'+t("qzInfo",{n:Q.length,r:QR})+'</p><button class="btn full" id="qgo" style="margin-top:12px">'+t("qzStart")+'</button>';$("qgo").onclick=function(){qi=1;quiz()};return}
+ if(qi>Q.length){var win=qs===Q.length;
+  b.innerHTML='<div class="q"><h3>'+(win?t("qzWin"):"")+' '+t("qzScore",{s:qs,n:Q.length})+'</h3></div>';
+  var x=document.createElement("button");x.className="btn full";x.style.marginTop="12px";
+  if(win){x.textContent=t("qzClaim",{r:QR});x.onclick=function(){if(needActive())return;wa("Bonjour KashView, j'ai réussi le quiz ("+Q.length+"/"+Q.length+"). Je demande la validation de "+QR+" HTG."+who())}}
+  else{x.textContent=t("qzRetry");x.onclick=function(){quiz(true)}}
+  b.appendChild(x);return}
+ var q=Q[qi-1],c=document.createElement("div");c.className="q";c.innerHTML='<small>'+t("qzQ",{i:qi,n:Q.length})+'</small><h3></h3>';c.querySelector("h3").textContent=q.q;
+ q.o.forEach(function(o,j){var p=document.createElement("button");p.className="op";p.textContent=o;
+  p.onclick=function(){c.querySelectorAll(".op").forEach(function(z,k){z.disabled=true;if(k===q.a)z.classList.add("ok");else if(k===j)z.classList.add("ko")});
+   if(j===q.a)qs++;setTimeout(function(){qi++;quiz()},900)};c.appendChild(p)});b.appendChild(c)}
+
+function mask(){return "••••••"+CFG.pay.slice(-4)}
+function sheet(h){$("psb").innerHTML=h;$("ps").classList.add("on")}
+function copyNum(btn){var ok=function(){btn.textContent=t("copied")};if(navigator.clipboard)navigator.clipboard.writeText(CFG.pay).then(ok,function(){prompt("",CFG.pay)});else prompt("",CFG.pay)}
+function openers(){return '<a class="btn full" href="tel:'+CFG.ussd.replace("#","%23")+'">📞 '+t("oMon")+'</a><a class="btn full" href="tel:'+CFG.ussd.replace("#","%23")+'">📞 '+t("oNat")+'</a>'+
+ '<div class="row"><a class="btn o" target="_blank" rel="noopener" href="'+CFG.stores.moncash+'">'+t("aMon")+'</a><a class="btn o" target="_blank" rel="noopener" href="'+CFG.stores.natcash+'">'+t("aNat")+'</a></div><p class="note">'+t("ussd")+'</p>'}
+function openPay(){sheet('<h3 style="margin:0 0 6px">'+t("payT")+'</h3><p class="note" style="margin-top:0">'+t("payS")+'</p>'+
+ '<div class="code"><div><small>'+t("payTo")+'</small><br><b style="font-size:1.2rem">'+mask()+'</b></div><button class="btn or" id="cn">'+t("copyNum")+'</button></div>'+openers()+
+ '<button class="btn wa full" id="pd">'+t("paid")+'</button>');
+ $("cn").onclick=function(){copyNum(this)};$("pd").onclick=function(){wa("Bonjour KashView, voici ma preuve de paiement de 250 HTG."+who())}}
+function openWd(){sheet('<h3 style="margin:0 0 6px">'+t("wdT")+'</h3>'+
+ '<label for="wm">'+t("wdM")+'</label><select id="wm"><option>MonCash</option><option>NatCash</option></select>'+
+ '<label for="ww">'+t("wdW")+'</label><input id="ww" type="tel" inputmode="tel">'+
+ '<label for="wq">'+t("wdA")+'</label><input id="wq" type="number" inputmode="numeric" min="200">'+
+ '<p id="we" style="color:var(--rd);font-weight:700;margin:8px 0 0"></p><button class="btn wa full" id="wg">'+t("wdSend")+'</button>'+
+ '<p class="note"><b>'+t("wdCheck")+'</b></p>'+openers());
+ $("wg").onclick=function(){var q=parseInt($("wq").value,10),w=$("ww").value.replace(/[^\d+]/g,"");
+  if(w.replace(/\D/g,"").length<8||!q){$("we").textContent=t("eTel");return}
+  if(q<200){$("we").textContent=t("aMin");return}
+  if(q>U.solde){$("we").textContent=t("aInsuf");return}
+  wa("Bonjour KashView, je demande un retrait de "+q+" HTG par "+$("wm").value+" au "+w+"."+who())}}
+$("psx").onclick=function(){$("ps").classList.remove("on")};
+
+async function act(a){
+ if(a==="help"){wa("Bonjour KashView, j'ai besoin d'aide."+who());return}
+ if(a==="logout"){localStorage.removeItem("kv-s");U=null;$("fo").classList.add("hid");sw(0);render();return}
+ if(!U)return;
+ if(a==="pay"){openPay();return}
+ if(a==="verify"){if(needActive())return;wa("Bonjour KashView, je demande la vérification de mon compte. J'envoie ma pièce d'identité."+who());return}
+ if(a==="pin"){var o=prompt(t("pOld")),p=prompt(t("pNew"));if(!o||!/^\d{4,8}$/.test(p||""))return;
+  try{var j=await api({a:"pin",tel:U.tel,h:await hsh(U.tel,o),h2:await hsh(U.tel,p)});
+   if(j.ok){localStorage.setItem("kv-s",JSON.stringify({tel:U.tel,h:await hsh(U.tel,p)}));alert(t("aPinOk"))}else alert(t("aPinBad"))}catch(x){alert(x.message)}return}
+ if(a==="transfer"){
+  if(U.statut!=="Vérifié"){alert(t("aTrOnly"));return}
+  var to=prompt(t("pTo"));if(!to)return;
+  var m=parseInt(prompt(t("pAmt")),10);if(!m||m<=0)return;
+  if(m>U.solde){alert(t("aInsuf"));return}
+  var f=Math.floor(m/100);
+  if(confirm(t("cTr",{m:n(m),f:f,r:n(m-f)})))wa("Bonjour KashView, je demande un transfert de "+m+" HTG vers "+to+" (frais 1 % : "+f+" HTG)."+who());return}
+ if(a==="withdraw"){
+  if(needActive())return;
+  if(U.taches<20||U.gains<250){alert(t("aWd",{t:U.taches,g:n(U.gains)}));return}
+  openWd()}
+}
+document.querySelectorAll("[data-act]").forEach(function(e){e.onclick=function(){act(e.dataset.act)}});
+$("cp").onclick=function(){var c=U.code,ok=function(){$("cp").textContent=t("copied")};
+ if(navigator.clipboard)navigator.clipboard.writeText(c).then(ok,function(){prompt("",c)});else prompt("",c)};
+function msg(){return "KashView : "+U.code+" "+location.href.split("#")[0]}
+$("shw").onclick=function(){window.open("https://wa.me/?text="+encodeURIComponent(msg()),"_blank")};
+$("sh").onclick=function(){if(navigator.share)navigator.share({text:msg()}).catch(function(){});else $("shw").click()};
+
+document.querySelectorAll(".lsel").forEach(function(s){s.onchange=function(){L=s.value;try{localStorage.setItem("kv-lang",L)}catch(e){}labels();render();$("err").textContent=""}});
+function sw(i){$("fs").classList.toggle("hid",!!i);$("fl").classList.toggle("hid",!i);$("t2").classList.toggle("on",!i);$("t1").classList.toggle("on",!!i);$("err").textContent=""}
+$("t1").onclick=function(){sw(1)};$("t2").onclick=function(){sw(0)};
+function err(k){$("err").textContent=k?t(k):""}
+function setU(j,tel){U={nom:j.nom,prenom:j.prenom,tel:tel,statut:j.statut,code:j.code||"",solde:+j.solde||0,reserve:+j.reserve||0,gains:+j.gains||0,taches:+j.taches||0,refs:j.refs||[],hist:j.hist||[]};render()}
+async function login(tel,pin){var h=await hsh(tel,pin),j=await api({a:"login",tel:tel,h:h});
+ if(!j.ok)throw new Error(t(j.error==="trop"?"eMany":"eLogin"));
+ localStorage.setItem("kv-s",JSON.stringify({tel:tel,h:h}));setU(j,tel)}
+function fail(x){$("err").textContent=x.message}
+
+$("fl").onsubmit=async function(e){e.preventDefault();err();var tel=$("lt").value.trim(),pin=$("lp").value;
+ if(tel.replace(/\D/g,"").length<8||pin.length<4){err("eInv");return}
+ try{await login(tel,pin)}catch(x){fail(x)}};
+
+var pend=null;
+$("fs").onsubmit=async function(e){e.preventDefault();err();
+ var v=function(i){return $(i).value.trim().slice(0,120)};
+ var d={a:"register",nom:v("sn"),prenom:v("sp"),tel:v("sph"),email:v("se"),ref:v("sr"),methode:"MonCash / NatCash",tx:""},pin=$("sk").value;
+ if(!d.nom||!d.prenom||!d.tel||!d.email){err("eReq");return}
+ if(!/^\S+@\S+\.\S+$/.test(d.email)){err("eMail");return}
+ if(d.tel.replace(/\D/g,"").length<8){err("eTel");return}
+ if(!/^\d{4,8}$/.test(pin)){err("ePin");return}
+ try{d.h=await hsh(d.tel,pin);var j=await api(d);
+  if(!j.ok){err(j.error==="dup"?"eDup":"eReg");return}
+  pend={tel:d.tel,pin:pin};
+  $("fw").href="https://wa.me/"+CFG.wa+"?text="+encodeURIComponent("Bonjour KashView, je viens de créer mon compte.\n\nNom : "+d.nom+"\nPrénom : "+d.prenom+"\nTéléphone : "+d.tel+"\nE-mail : "+d.email+(d.ref?"\nCode référence : "+d.ref:""));
+  $("fs").classList.add("hid");$("fo").classList.remove("hid")}catch(x){fail(x)}};
+$("fp").onclick=function(){login(pend.tel,pend.pin).then(function(){$("fo").classList.add("hid");sw(0);openPay()}).catch(fail)};
+$("fg").onclick=async function(){try{await login(pend.tel,pend.pin);$("fo").classList.add("hid");sw(0)}catch(x){fail(x)}};
+
+try{var sl=localStorage.getItem("kv-lang");if(sl&&T[sl])L=sl}catch(e){}
+labels();render();
+try{var S=JSON.parse(localStorage.getItem("kv-s")||"null");
+ if(S)api({a:"login",tel:S.tel,h:S.h}).then(function(j){if(j.ok)setU(j,S.tel)}).catch(function(){})}catch(e){}
+</script>
+</body>
+</html>
